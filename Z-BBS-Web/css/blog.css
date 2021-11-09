@@ -1,0 +1,10 @@
+#respond_comments{
+    color: blue;
+    user-select: none;
+}
+.card-body{
+}
+pre{
+    overflow: auto;
+    overflow-y:hidden
+}

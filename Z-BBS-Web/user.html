@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>Z-Blog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- 开发环境版本，包含了有帮助的命令行警告 -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+    <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
+    <script src="lib/bootstrap-4.6.0-dist/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="lib/bootstrap-4.6.0-dist/css/bootstrap.min.css">
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/wangeditor@latest/dist/wangEditor.min.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="config.js"></script>
+    <style>
+        .card{
+            margin-top: 10px;
+        }
+
+        #bolg_editor{
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+<div id="app">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="#">
+            <img src="img/test.png" width="32" class="d-inline-block align-top" alt="">
+            Z-BBS论坛</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item active">
+                    <a class="nav-link" href="#">主页 <span class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">下载</a>
+                </li>
+            </ul>
+            <div>
+                <button class="btn btn-primary" v-show="!user_login">登录</button>
+                <img v-bind:src="user_info['user_head_portrait']" class="img-fluid img-thumbnail rounded-circle" width="32">
+                <span>{{user_info["user_name"]}}</span>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                    <strong>{{blog_msg['msg_title']}}</strong> {{blog_msg['msg_text']}}
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        用户中心
+                    </div>
+                    <div class="card-body">
+                        <div class="form-group">
+                            <div class="text-center row">
+                                <label for="user_head" class="col-sm-2 col-form-label">修改头像</label>
+                                <div class="col-sm-2">
+                                    <img src="./img/head.jpg" id="user_head" class="img-fluid img-thumbnail" alt="">
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="uid" class="col-sm-2 col-form-label">用户ID</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="uid" placeholder="用户ID" disabled>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="username" class="col-sm-2 col-form-label">用户名</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="username" placeholder="用户名">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="user_born" class="col-sm-2 col-form-label">生日</label>
+                            <div class="col-sm-10">
+                                <input type="date" class="form-control" id="user_born" placeholder="用户名">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+
+                            <label for="modify_pwd" class="col-sm-2 col-form-label">密码</label>
+                            <div class="col-sm-10">
+                                <button class="btn btn-primary" id="modify_pwd">修改密码</button>
+                            </div>
+                        </div>
+                        <button class="btn btn-primary float-right" id="modefi_user_info">修改用户信息</button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>用户信息</h5>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-group">
+                            <li class="list-group-item">评论数：0</li>
+                            <li class="list-group-item">帖子数：0</li>
+                            <li class="list-group-item">关注数：0</li>
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <!-- 发新帖模态框 -->
+    <div class="modal fade bd-example-modal-lg" id="new_bolg" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">写作</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <input type="text" class="form-control" id="bolg_title" placeholder="博客标题">
+                    <div id="bolg_editor">
+                        <!--文本编辑器-->
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+                    <button type="button" class="btn btn-primary" v-on:click="push_new_blog">发布</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<script>
+    const vm = new Vue({
+        el:"#app",
+        data:{
+            user_login:true,
+            user_info:{
+                "user_name":"未登录",
+                "user_head_portrait":"img/head.jpg"
+            },
+            blog_info:[
+                {
+                    "blog_title":"博客标题",
+                    "user_head_portrait":"img/head.jpg",
+                    "blog_user":"发表用户",
+                    "blog_time":"发表时间"
+                },
+                {
+                    "blog_title":"博客标题2",
+                    "user_head_portrait":"img/head.jpg",
+                    "blog_user":"发表用户2",
+                    "blog_time":"发表时间2"
+                }
+            ],
+            blog_msg:{
+                "msg_title":"站点公告",
+                "msg_text":"Z-BSS开始开发啦"
+            }
+        },
+        methods:{
+            push_new_blog:function (){
+                let blog_text = editor.txt.html();
+                let url = server_url + "/api/";
+                axios.post(url + "getBlog/公开")
+                    .then((res) => {
+                        if (res.status === 200) {
+                            if (res.data['status'] === 200) {
+                                this.blog_info = res.data['data'];
+                            } else {
+                                alert("接口验证失败")
+                            }
+                        } else {
+                            alert("接口请求失败");
+                        }
+                    })
+                console.log(blog_text);
+            }
+        }
+    });
+</script>
+<script>
+    const E = window.wangEditor
+    const editor = new E("#bolg_editor")
+    // 或者 const editor = new E(document.getElementById('div1'))
+    editor.create()
+</script>
+</html>
