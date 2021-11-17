@@ -1,0 +1,14 @@
+location / {
+        index index.html index.php;
+        if (!-e $request_filename) {
+            rewrite ^/dashboard$ /index.php/Home/Inoreader last;
+            rewrite ^/starred$ /index.php/Home/Inoreader last;
+            rewrite ^/logout$ /index.php/Home/Inoreader/logout last;
+            rewrite ^/discovery(.*)$ /index.php/Home/Inoreader last;
+            rewrite ^/all_articles$ /index.php/Home/Inoreader last;
+            rewrite ^/folder/(.*)$ /index.php/Home/Inoreader last;
+            rewrite ^/feed/(\d+)$ /index.php/Home/Inoreader last;
+            rewrite ^/article/(\w+)-(.*)$ /index.php/Home/Inoreader last;
+            rewrite ^/(.*)$ /index.php/$1 last;
+        }
+    }

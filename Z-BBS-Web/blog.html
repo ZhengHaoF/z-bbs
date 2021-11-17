@@ -79,26 +79,35 @@
                         </div>
                         <span>发布时间：{{blog_info['blog_time']}}</span>
                         <p class="row" style="padding: 15px">
-                            <textarea class="form-control col-10"></textarea>
-                            <button class="btn btn-primary col-2">回复</button>
+                            <textarea class="form-control col-10" id="reply_text"></textarea>
+                            <button class="btn btn-primary col-2" v-on:click="push_reply(blog_id,0)">回复</button>
                         </p>
                         <ul class="list-group">
                             <!--评论-->
-                            <li class="list-group-item shadow-sm" v-for="item in comments_info">
+                            <li class="list-group-item shadow-sm" v-for="(reply,index) in reply_info">
                                 <a href="#" class="mr-3 float-left">
-                                    <img v-bind:src="item['user_head_img']" width="64" class="img-fluid img-thumbnail rounded-circle" alt="">
+                                    <img v-bind:src="reply['user_head_img']" width="64" class="img-fluid img-thumbnail rounded-circle" alt="">
                                 </a>
-                                <p class="font-weight-bold ">{{item["comments_user"]}}</p>
-                                <span class="text-grey">{{item["comments_text"]}}</span>
-                                <span class="text-muted">{{item["comments_time"]}}</span>
-                                <span class="text-muted float-right" id="respond_comments" data-toggle="modal" data-target="#respond_model">回复</span>
+                                <p class="font-weight-bold ">{{reply["reply_user"]}}</p>
+                                <span class="text-grey">{{reply["reply_text"]}}</span>
+                                <span class="text-muted">{{reply["reply_time"]}}</span>
+                                <span class="text-muted float-right" id="respond_comments" data-toggle="modal" data-target="#respond_model" >回复</span>
                                 <hr>
+                                <button class="btn text-muted float-right" v-if="reply['have_son_reply']" v-on:click="get_reply(reply['blog_id'],reply['reply_id'],index)">展开回复</button>
                                 <!--评论回复-->
-                                <ul class="list-group" v-for="comments_comments in item['reply']">
-                                    <li class="list-group-item list-group-item-action">
-                                        <span>{{comments_comments['reply_user']}}：</span><span>{{comments_comments['reply_text']}}</span>
+                                <ul class="list-group">
+                                    <li class="list-group-item list-group-item-action" v-for="reply_reply in reply['reply']">
+                                        <span>{{reply_reply['reply_user']}}：</span>
+                                        <span>{{reply_reply['reply_text']}}</span>
+                                        <span class="text-muted float-right">{{reply_reply['reply_time']}}</span>
                                     </li>
                                 </ul>
+                            <!--
+                                <div class="d-flex" v-if="item['reply_reply_box']['state']">
+                                    <textarea v-bind:placeholder="item['reply_reply_box']['reply_for']" class="form-control" v-model="item['reply_reply_box']['reply_text']"></textarea>
+                                    <button class="btn btn-primary" v-on:click="push_reply(item['reply_id'])">回复</button>
+                                </div>
+                            -->
                             </li>
                         </ul>
                     </div>
@@ -150,6 +159,7 @@
             </div>
         </div>
     </div>
+
 </div>
 </body>
 <script src="./js/blog.js"></script>

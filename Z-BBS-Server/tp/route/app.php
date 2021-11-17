@@ -22,3 +22,5 @@ Route::post('api/userLogin', 'index/userLogin');
 Route::post('api/userLoginCheck', 'index/userLoginCheck');
 Route::post('api/pushBlog', 'index/pushBlog');
 Route::post('api/getBlog', 'index/getBlog');
+Route::post('api/pushReply', 'index/pushReply');
+Route::post('api/getReply', 'index/getReply');

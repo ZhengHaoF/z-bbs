@@ -84,7 +84,7 @@ class Index extends BaseController
             $user_head_img = json_decode($this->getUserHeadImg($uname), true)['data'];
             return json(array("status"=>200,"msg"=>"验证成功","user_head_img"=>$user_head_img));
         }else{
-            return json(array("status"=>404,"msg"=>"验证失败"));
+            return json(array("status"=>403,"msg"=>"验证失败"));
         }
 
     }
@@ -117,6 +117,22 @@ class Index extends BaseController
     public function getBlog(Request $request)
     {
         //获取博客内容
+        /*
+         {
+            "status": 200,  //状态码
+            "data": [
+                {
+                    "blog_title": "SQL表结构修复",   //博文标题
+                    "blog_text": "博文内容",    //博文内容
+                    "blog_time": "2021-10-09 14:23:19", //博文发表时间
+                    "blog_user": "ZHF", //博文用户
+                    "blog_group": "public", //博文权限
+                    "blog_id": 12,  //博文ID
+                    "blog_modify_time": "2021-10-09 14:23:19"   //博文修改时间
+                }
+            ]
+        }
+         */
         $blogId = $request->param("blogId");
         $blog_data = Db::table("z_blog_info")->where("blog_id", $blogId)->select();
         if ($blog_data->count()>0){
@@ -125,5 +141,72 @@ class Index extends BaseController
             return json(array("status"=>404,"msg"=>"找不到该博客"));
         }
     }
+
+    public function pushReply(Request $request)
+    {
+        //博文评论
+        $reply_user = $request -> param("uname");
+        $token = $request -> param("token");
+        $replyTime = $request -> param("replyTime");
+        $replyText = $request -> param("replyText");
+        $blogId = $request -> param("blogId");
+        $replyFor = $request -> param("replyFor");
+        if($this->userLoginCheckMethods($reply_user, $token)["status"]==200){
+            $data = [
+                'reply_user' => $reply_user,
+                'reply_time' => $replyTime,
+                'reply_text' => $replyText,
+                'blog_id' => $blogId,
+                'reply_for' => $replyFor
+            ];
+            Db::table("z_reply_info")->insert($data);
+            return json(array("status"=>200,"msg"=>"提交成功"));
+        }else{
+            return json(array("status"=>403,"msg"=>"用户未登录"));
+        }
+    }
+
+    public function getReply(Request $request){
+        //获取评论
+        /*
+            [
+                {
+                    "status": 200, //状态码
+                    "data": [
+                        {
+                            "reply_id": 10, //评论ID
+                            "blog_id": 12,  //博客ID
+                            "reply_text": "666",
+                            "reply_time": "2021-11-15 15:48:40",    //评论时间
+                            "reply_for": 2, //评论对象，0代表评论对象为博客，非0则为评论的子评论
+                            "uname": "ZHF", //评论用户
+                            "user_head_img": "./img/head.jpg",  //评论用户的头像
+                            "have_son_reply": false //是否还有子评论
+                        }
+                    ]
+                }
+            ]
+
+         */
+        $blogId = $request -> param("blogId");
+        $replyFor = $request -> param("replyFor");
+        $data = Db::table("z_reply_info")->where("blog_id",$blogId)->where("reply_for",$replyFor)->select()->toArray();
+        for($i=0;$i<sizeof($data);$i++){
+            $uname = $data[$i]["reply_user"];
+            $user_head_img = json_decode($this->getUserHeadImg($uname), true)['data'];
+            $data[$i]["user_head_img"] = $user_head_img;
+            //是否有子评论
+            $have_son_reply = Db::table("z_reply_info")->where("blog_id",$blogId)->where("reply_for",$data[$i]["reply_id"])->count() > 0;
+            $data[$i]["have_son_reply"] = $have_son_reply;
+        }
+        return json(array("status"=>200,"data"=>$data));
+    }
+/*
+    状态码列表
+    200 --- 成功响应
+    404 --- 找不到文件/用户（登录时或查看博客时）
+    403 --- 禁止访问（用户未登录）
+    500 --- 服务器问题，未响应
+*/
 
 }

@@ -3,12 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <script src="./lib/Vue/vue.js"></script>
+    <script src="./lib/jquery/1.10.2/jquery.min.js"></script>
 </head>
 <body>
-    <div style="width: 50%;border: 2px solid red;">
-        <pre style="overflow: auto">
-            <code>表名.ibd //表数据和索引的文件。该表的索引(B+树)的每个非叶子每个非叶子每个非叶子每个非叶子每个非叶子每个非叶子每个非叶子每个非叶子每个非叶子节点存储索引，叶子节点存储索引和索引对应的数据。</code>
-        </pre>
+    <div id="app">
+        <div>
+            <ul>
+                <li v-for="item in reply_info">
+                    <ul>
+                       <li v-for="r in item['reply']">
+                            {{r['blog_id']}}
+                       </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
     </div>
 </body>
+<script>
+    const vm = new Vue({
+        el:"#app",
+        data:{
+            reply_info:[
+                {
+                    "reply_reply_box":{
+                        //回复回复的回复框
+                        state:false, //状态（是否显示）
+                        reply_for_name:"回复@ZHF",//回复给谁（显示文字）
+                        reply_text:"回复内容"
+                    },
+                    "blog_id":"博客ID",
+                    "reply_user":"评论用户",
+                    "reply_id":0,
+                    "user_head_img":"img/head.jpg",
+                    "reply_text":"加载中···",
+                    "reply_time":"加载中···",
+                    "have_son_reply":true,
+                }
+            ]
+        }
+    })
+</script>
 </html>
