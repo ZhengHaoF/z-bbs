@@ -5,7 +5,7 @@ const vm = new Vue({
         login_state: false,
         user_info: {
             user_name: "未登录",
-            user_reg_time:"1970-01-01",
+            user_reg_time:"1970-01-01",//用户注册时间
             user_head_img: "img/logo.png"
         },
         bbs_info:{
@@ -49,25 +49,6 @@ const vm = new Vue({
                         }
                     } else {
                         alert("接口请求失败");
-                    }
-                })
-        },
-        get_blog_info: function (group) {
-            /*
-            * 获取博文标题和预览
-            * @param group {String} 需获取的博客的组
-            * */
-            axios.get(this.url + "getBlogPreview/" + group + "?ran="+Math.floor(Math.random()*10000))
-                //用随机数来阻止缓存
-                .then((res) => {
-                    if (res.status === 200) {
-                        if (res.data['status'] === 200) {
-                            this.blog_info = res.data['data'];
-                        } else {
-                            alert("接口验证失败")
-                        }
-                    } else {
-                        alert("获取博客接口请求失败");
                     }
                 })
         },
@@ -136,26 +117,6 @@ const vm = new Vue({
                     }
                 })
         },
-        get_bbs_info:function(){
-            //论坛数据
-            axios.get(this.url + "getBbsInfo")
-                .then((res) => {
-                    if (res.status === 200) {
-                        if (res.data['status'] === 200) {
-                            this.bbs_info['bbsThemeCount'] = res.data['data']['bbsThemeCount'];
-                            this.bbs_info['bbsDiscussCount'] = res.data['data']['bbsDiscussCount'];
-                            this.bbs_info['bbsUserCount'] = res.data['data']['bbsUserCount'];
-                        } else if(res.data['status'] === 403){
-
-                        }else {
-                            alert("接口验证失败")
-                        }
-                    } else {
-                        alert("获取博客接口请求失败");
-                    }
-                })
-
-        },
         logon_out:function (){
             //登出
             if (this.login_state){
@@ -178,8 +139,6 @@ const vm = new Vue({
         }
     },
     mounted: function () {
-        this.get_blog_info("public");
         this.user_check();
-        this.get_bbs_info();
     }
 });

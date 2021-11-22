@@ -52,7 +52,7 @@
             <button class="btn btn-primary" v-show="!login_state" data-toggle="modal" data-target="#login_model">登录</button>
             <img v-bind:src="user_info['user_head_img']" class="img-fluid img-thumbnail rounded-circle"
                  width="32">
-            <span>{{ user_info["user_name"] }}</span>
+            <span v-on:click="logon_out">{{ user_info["user_name"] }}</span>
 
         </div>
     </nav>
@@ -104,9 +104,9 @@
                     </div>
                     <div class="card-body">
                         <ul class="list-group">
-                            <li class="list-group-item">主题：0</li>
-                            <li class="list-group-item">讨论：0</li>
-                            <li class="list-group-item">用户：0</li>
+                            <li class="list-group-item">主题：{{bbs_info['bbsThemeCount']}}</li>
+                            <li class="list-group-item">讨论：{{bbs_info['bbsDiscussCount']}}</li>
+                            <li class="list-group-item">用户：{{bbs_info['bbsUserCount']}}</li>
                         </ul>
                     </div>
                 </div>

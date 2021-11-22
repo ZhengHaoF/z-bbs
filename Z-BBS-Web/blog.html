@@ -38,7 +38,7 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav mr-auto">
                 <li class="nav-item active">
-                    <a class="nav-link" href="#">主页 <span class="sr-only">(current)</span></a>
+                    <a class="nav-link" href="#">主页</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="#">下载</a>
@@ -51,7 +51,7 @@
             <button class="btn btn-primary" v-show="login_state" data-toggle="modal" data-target="#new_bolg">发新帖
             </button>
             <button class="btn btn-primary" v-show="!login_state" data-toggle="modal" data-target="#login_model">登录</button>
-            <img v-bind:src="user_info['user_head_img']" class="img-fluid img-thumbnail rounded-circle"
+            <            img v-bind:src="user_info['user_head_img']" class="img-fluid img-thumbnail rounded-circle"
                  width="32">
             <span>{{ user_info["user_name"] }}</span>
         </div>
@@ -74,13 +74,16 @@
                         <h2>
                             {{blog_info['blog_title']}}
                         </h2>
-                        <div v-html="blog_info['blog_text']">
-                            <!--博客内容-->
+                        <div class="w-e-text-container">
+                            <div class="w-e-text" v-html="blog_info['blog_text']">
+                                <!--博客内容-->
+                            </div>
                         </div>
+
                         <span>发布时间：{{blog_info['blog_time']}}</span>
                         <p class="row" style="padding: 15px">
-                            <textarea class="form-control col-10" id="reply_text"></textarea>
-                            <button class="btn btn-primary col-2" v-on:click="push_reply(blog_id,0)">回复</button>
+                            <textarea ref="reply_text" class="form-control col-10" id="reply_text"></textarea>
+                            <button class="btn btn-primary col-2" v-on:click="push_reply(blog_id,0,$refs.reply_text.value)">回复</button>
                         </p>
                         <ul class="list-group">
                             <!--评论-->
@@ -91,7 +94,7 @@
                                 <p class="font-weight-bold ">{{reply["reply_user"]}}</p>
                                 <span class="text-grey">{{reply["reply_text"]}}</span>
                                 <span class="text-muted">{{reply["reply_time"]}}</span>
-                                <span class="text-muted float-right" id="respond_comments" data-toggle="modal" data-target="#respond_model" >回复</span>
+                                <button class="btn text-muted float-right" id="respond_comments" data-toggle="modal" data-target="#respond_model" v-on:click="set_reply_reply_box(reply['reply_user'],reply['reply_text'],reply['reply_id'])">回复</button>
                                 <hr>
                                 <button class="btn text-muted float-right" v-if="reply['have_son_reply']" v-on:click="get_reply(reply['blog_id'],reply['reply_id'],index)">展开回复</button>
                                 <!--评论回复-->
@@ -102,12 +105,6 @@
                                         <span class="text-muted float-right">{{reply_reply['reply_time']}}</span>
                                     </li>
                                 </ul>
-                            <!--
-                                <div class="d-flex" v-if="item['reply_reply_box']['state']">
-                                    <textarea v-bind:placeholder="item['reply_reply_box']['reply_for']" class="form-control" v-model="item['reply_reply_box']['reply_text']"></textarea>
-                                    <button class="btn btn-primary" v-on:click="push_reply(item['reply_id'])">回复</button>
-                                </div>
-                            -->
                             </li>
                         </ul>
                     </div>
@@ -155,6 +152,28 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
                     <button type="button" class="btn btn-primary" v-on:click="user_login">登录</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 回复模态框 -->
+    <div class="modal fade bd-example-modal-lg" id="respond_model" tabindex="-1" role="dialog"
+         aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">回复@{{reply_reply_box['reply_for_name']}}</h5>
+                </div>
+                <div class="modal-body">
+                    原文：<p v-html="reply_reply_box['reply_original_text']"></p>
+                    <textarea class="form-control" ref="reply_reply_text" v-model="reply_reply_box['reply_text']" v-bind:placeholder="'@' + reply_reply_box['reply_for_name']">
+
+                    </textarea>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+                    <button type="button" class="btn btn-primary" v-on:click="push_reply(blog_id,reply_reply_box['reply_for_id'],reply_reply_box['reply_text'])">提交</button>
                 </div>
             </div>
         </div>

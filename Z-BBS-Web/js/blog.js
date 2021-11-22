@@ -10,12 +10,6 @@ const vm = new Vue({
         },
         reply_info:[
             {
-                "reply_reply_box":{
-                    //回复回复的回复框
-                    state:false, //状态（是否显示）
-                    reply_for_name:"回复@ZHF",//回复给谁（显示文字）
-                    reply_text:"回复内容"
-                },
                 "blog_id":"博客ID",
                 "reply_user":"评论用户",
                 "reply_id":0,
@@ -36,6 +30,13 @@ const vm = new Vue({
                 ]
             }
         ],
+        reply_reply_box:{
+            //回复回复的回复框
+            reply_for_id:"",
+            reply_for_name:"加载中···",//回复给谁（显示文字）
+            reply_original_text:"加载中···",//回复的原文
+            reply_text:""//回复的文字
+        },
         blog_info:{
             blog_user:"加载中···",
             blog_title:"加载中···",
@@ -145,19 +146,18 @@ const vm = new Vue({
                     }
                 })
         },
-        push_reply:function (blog_id,replyFor){
+        push_reply:function (blog_id,reply_for,reply_text){
             //回复
 
             let uname = localStorage.getItem("uname");
             let token = localStorage.getItem("token");
-
             let data = {
                 "uname":uname,
                 "token":token,
                 "blogId":this.blog_id, //博客ID
-                "replyText":$("#reply_text").val(),
+                "replyText":reply_text,
                 "replyTime":this.getDate,
-                "replyFor":replyFor //0为对博客的评论,其他为评论id
+                "replyFor":reply_for //0为对博客的评论,其他为评论id
             }
 
             let formData = new FormData()
@@ -169,7 +169,10 @@ const vm = new Vue({
                     if (res.status === 200) {
                         if (res.data['status'] === 200) {
                             hsycms.success("评论成功    ",()=>{
-                                $("#reply_text").val('');//清空文本框
+                                //清空两个文本框
+                                this.$refs['reply_reply_text'].val('');
+                                this.$refs['reply_text'].val('');
+                                //重新获取博客ID
                                 this.get_reply(blog_id,0)
                             },1800)
                         } else if(res.data['status'] === 403){
@@ -183,11 +186,11 @@ const vm = new Vue({
                     }
                 })
         },
-        get_reply:function(blogId,replyFor,reply_index){
+        get_reply:function(blog_id,reply_for,reply_index){
             //获取评论
             let data = {
-                "blogId":blogId, //博客ID
-                "replyFor":replyFor
+                "blogId":blog_id, //博客ID
+                "replyFor":reply_for
             }
             let formData = new FormData()
             for (let key in data) {
@@ -197,7 +200,7 @@ const vm = new Vue({
                 .then((res) => {
                     if (res.status === 200) {
                         if (res.data['status'] === 200) {
-                            if(replyFor === 0){
+                            if(reply_for === 0){
                                 //获取根节点回复
                                 this.reply_info = res.data['data'];
                                 for (let i in res.data['data']){
@@ -222,6 +225,11 @@ const vm = new Vue({
                     }
                 })
 
+        },
+        set_reply_reply_box(reply_user,reply_text,reply_for_id){
+            this.reply_reply_box['reply_for_name'] = reply_user;
+            this.reply_reply_box['reply_original_text'] = reply_text;
+            this.reply_reply_box['reply_for_id'] = reply_for_id;
         }
     },
     computed: {

@@ -5,7 +5,6 @@ namespace app\controller;
 use app\BaseController;
 use app\Request;
 use think\facade\Db;
-use function MongoDB\BSON\toJSON;
 
 class Index extends BaseController
 {
@@ -57,7 +56,7 @@ class Index extends BaseController
                 //在字段中不存在
                 Db::table("z_users_token")->insert(['uname'=>$uname,'token'=>$token]);
             }
-            return json(array("status"=>200,"data"=>array("uname"=>$uname,"user_head_img"=>$data["user_head_img"],'token'=>$token)));
+            return json(array("status"=>200,"data"=>array("uname"=>$uname,"user_reg_time"=>$data['reg_time'],"user_head_img"=>$data["user_head_img"],'token'=>$token)));
         }else{
             return json(array("status"=>404,"msg"=>"用户名或密码错误"));
         }
@@ -201,6 +200,15 @@ class Index extends BaseController
         }
         return json(array("status"=>200,"data"=>$data));
     }
+    public function getBbsInfo(){
+            //获取论坛数据
+        $bbsThemeCount = Db::table("z_blog_info")->count();
+        $bbsDiscussCount = Db::table("z_reply_info")->count();
+        $bbsUserCount = Db::table("z_users")->count();
+        return json(array("status"=>200,"data"=>array("bbsThemeCount"=>$bbsThemeCount,"bbsDiscussCount"=>$bbsDiscussCount,"bbsUserCount"=>$bbsUserCount)));
+    }
+
+
 /*
     状态码列表
     200 --- 成功响应

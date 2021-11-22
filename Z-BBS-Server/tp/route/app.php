@@ -24,3 +24,4 @@ Route::post('api/pushBlog', 'index/pushBlog');
 Route::post('api/getBlog', 'index/getBlog');
 Route::post('api/pushReply', 'index/pushReply');
 Route::post('api/getReply', 'index/getReply');
+Route::get('api/getBbsInfo', 'index/getBbsInfo');
