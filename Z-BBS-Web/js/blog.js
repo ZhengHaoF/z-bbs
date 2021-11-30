@@ -1,7 +1,8 @@
 const vm = new Vue({
     el:"#app",
     data:{
-        url: server_url + "/api/",
+        web_url:WEB_URL,
+        url: SERVER_URL + "/api/",
         login_state:false,
         blog_id:"", //博文ID
         user_info:{
@@ -230,12 +231,22 @@ const vm = new Vue({
             this.reply_reply_box['reply_for_name'] = reply_user;
             this.reply_reply_box['reply_original_text'] = reply_text;
             this.reply_reply_box['reply_for_id'] = reply_for_id;
+        },
+        logon_out:function (){
+            //登出
+            if (this.login_state){
+                if(confirm("是否登出账户？")){
+                    localStorage.clear();
+                    location.reload();
+                    this.login_state = false;
+                }
+            }
         }
     },
     computed: {
         getDate:function (){
             let d = new Date()
-            return d.getFullYear() + "-" + d.getMonth() + "-" + d.getDate() + " " + d.getHours() + ":" + d.getMinutes()+":"+d.getSeconds();
+            return d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate() + " " + d.getHours() + ":" + d.getMinutes()+":"+d.getSeconds();
         },
         getBlogUrl:function (){
             return window.location.protocol + "//" + window.location.host + "/blog.html?bid=";

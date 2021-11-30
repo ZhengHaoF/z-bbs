@@ -15,7 +15,6 @@ Route::get('think', function () {
 });
 
 Route::rule('hello/:name', 'index/hello');
-
 Route::get('api/getBlogPreview/:group', 'index/getBlogPreview');
 Route::get('api/getUserHeadImg/:uname', 'index/getUserHeadImg');
 Route::post('api/userLogin', 'index/userLogin');
@@ -25,3 +24,6 @@ Route::post('api/getBlog', 'index/getBlog');
 Route::post('api/pushReply', 'index/pushReply');
 Route::post('api/getReply', 'index/getReply');
 Route::get('api/getBbsInfo', 'index/getBbsInfo');
+Route::post('api/getUserBlogPreview', 'index/getUserBlogPreview');
+Route::post('api/delUserBlog', 'index/delUserBlog');
+Route::post('api/modifyUserBlog', 'index/modifyUserBlog');

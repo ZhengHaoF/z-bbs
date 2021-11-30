@@ -207,6 +207,77 @@ class Index extends BaseController
         $bbsUserCount = Db::table("z_users")->count();
         return json(array("status"=>200,"data"=>array("bbsThemeCount"=>$bbsThemeCount,"bbsDiscussCount"=>$bbsDiscussCount,"bbsUserCount"=>$bbsUserCount)));
     }
+    public function getUserBlogPreview(Request $request){
+        //获取博客预览内容
+        $uname = $request -> param("uname");
+        $token = $request -> param("token");
+        if($this->userLoginCheckMethods($uname,$token)["status"]==200) {
+            $blog_data = Db::table("z_blog_info")->where("blog_user", $uname)->select()->toArray();
+            for ($i = 0; $i < sizeof($blog_data); $i++) {
+                $uname = $blog_data[$i]["blog_user"];
+                $user_head_img = json_decode($this->getUserHeadImg($uname), true)['data'];
+                $blog_data[$i]["user_head_img"] = $user_head_img;
+                $blog_data[$i]["blog_text"] = mb_substr($blog_data[$i]["blog_text"], 0, 10, 'utf-8');
+            }
+            return json(array("status" => 200, "data" => $blog_data));
+        }else{
+            return json(array("status" => 403, "msg" => "用户未登录或密码错误"));
+        }
+    }
+
+    /**
+     * @throws \think\db\exception\DbException
+     */
+    public function delUserBlog(Request $request){
+        //删除用户博客
+        $uname = $request -> param("uname");
+        $token = $request -> param("token");
+        $blogId = $request -> param("blog_id");
+        if($this->userLoginCheckMethods($uname,$token)["status"]==200) {
+            if (Db::table("z_users")->where("uname",$uname)->value("user_group") == "admin"){
+                //是管理员直接删除
+                if (!Db::table("z_blog_info")->where("blog_id", $blogId)->delete()){
+                    return json(array("status" => 500, "msg" => "删除失败"));
+                }
+            }else{
+                //是普通用户只能删除本人发的
+                if(!Db::table("z_blog_info")->where("blog_user", $uname)->where("blog_id",$blogId)->delete()){
+                    return json(array("status" => 500, "msg" => "删除失败"));
+                }
+            }
+                 return json(array("status" => 200, "msg" => "删除成功"));
+        }else{
+            return json(array("status" => 403, "msg" => "用户未登录或密码错误"));
+        }
+    }
+
+    /**
+     * @throws \think\db\exception\DbException
+     */
+    public function modifyUserBlog(Request $request){
+        //修改用户博客
+        $uname = $request -> param("uname");
+        $token = $request -> param("token");
+        $blog_id = $request -> param("blog_id");
+        $blog_title = $request -> param("blog_title");
+        $blog_text = $request -> param("blog_text");
+        $blog_group = $request ->param("blog_group");
+        $blog_modify_time = $request ->param("blog_modify_time");
+        if($this->userLoginCheckMethods($uname,$token)["status"]==200){
+            $data = [
+                'blog_user' => $uname,
+                'blog_title' => $blog_title,
+                'blog_text' => $blog_text,
+                'blog_group' => $blog_group,
+                'blog_modify_time'=>$blog_modify_time
+            ];
+            if(Db::table("z_blog_info")->where("blog_id",$blog_id)->data($data)->update()==1){
+                return json(array("status"=>200,"msg"=>"修改成功"));
+            }else{
+                return json(array("status"=>500,"msg"=>"修改失败"));
+            }
+        }
+    }
 
 
 /*

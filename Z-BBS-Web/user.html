@@ -19,7 +19,7 @@
             margin-top: 10px;
         }
 
-        #bolg_editor {
+        #blog_editor {
             margin-top: 10px;
         }
     </style>
@@ -28,7 +28,7 @@
 <div id="app">
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <a class="navbar-brand" href="#">
-            <img src="img/test.png" width="32" class="d-inline-block align-top" alt="">
+            <img src="img/logo.png" width="32" class="d-inline-block align-top" alt="">
             Z-BBS论坛</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
                 aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -37,23 +37,26 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav mr-auto">
                 <li class="nav-item active">
-                    <a class="nav-link" href="#">主页 <span class="sr-only">(current)</span></a>
+                    <a class="nav-link" v-bind:href="web_url">主页<span class="sr-only">(current)</span></a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">下载</a>
+                    <a class="nav-link" href="https://gitee.com/ZHFHZ/z-bbs" target="_blank">开源</a>
                 </li>
             </ul>
             <div>
             </div>
         </div>
         <div>
-            <button class="btn btn-primary" v-show="login_state" data-toggle="modal" data-target="#new_bolg">发新帖
+            <button class="btn btn-primary" v-show="login_state" data-toggle="modal" data-target="#new_blog">发新帖
             </button>
             <button class="btn btn-primary" v-show="!login_state" data-toggle="modal" data-target="#login_model">登录</button>
-            <img v-bind:src="user_info['user_head_img']" class="img-fluid img-thumbnail rounded-circle"
-                 width="32">
-            <span v-on:click="logon_out">{{ user_info["user_name"] }}</span>
-
+            <a class="user-select-none text-body" href="user.html" target="_blank" style="text-decoration: none">
+                <img v-bind:src="user_info['user_head_img']" class="img-fluid img-thumbnail rounded-circle" width="32">
+                <span>{{ user_info["user_name"] }}</span>
+            </a>
+            <span v-on:click="logon_out" class="user-select-none" v-show="login_state" >
+                    <img src="./img/bootstrap-icons-1.7.1/box-arrow-in-right.svg" width="16" height="16"> 登出
+                </span>
         </div>
     </nav>
 
@@ -71,24 +74,54 @@
                     <div class="card-header">
                         <ul class="nav">
                             <li class="nav-item">
-                                <a class="nav-link" href="#">基本资料</a>
+                                <button class="nav-link btn" href="#">基本资料</button>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="#">博客管理</a>
+                                <button class="nav-link btn" href="#">博客管理</button>
                             </li>
                         </ul>
                     </div>
                     <div class="card-body">
-                        <div>
-                            <ul class="list-group">
-                                <li class="list-group-item">
-                                    用户名：<span class="text-muted">{{user_info['user_name']}}</span>
-                                </li>
-                                <li class="list-group-item">
-                                    修改密码：<input type="password" class="form-control"><button class="btn btn-primary">提交</button>
-                                </li>
-                            </ul>
+                        <div class="row"><!-- 基本资料-->
+                            <div class="col-lg-3" style="max-width: 200px">
+                                <img v-bind:src="user_info['user_head_img']" class="img-thumbnail d-block img-fluid">
+                            </div>
+                            <div class="col-lg-9">
+                                <div class="input-group form-group">
+                                    <span class="input-group-text">用户名：</span>
+                                    <span class="form-control">{{user_info['user_name']}}</span>
+                                </div>
+                                <div class="input-group form-group">
+                                    <input type="password" class="form-control">
+                                    <button class="btn btn-primary">修改密码</button>
+                                </div>
+                                <div class="input-group form-group">
+                                    <input type="file" class="form-control">
+                                    <button class="btn btn-primary" v-on:click="modify_user_head()" id="up_btn">修改头像</button>
+                                </div>
+                            </div>
                         </div>
+                        <!-- 博客管理-->
+
+                        <!--博客预览-->
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item" v-for="item in blog_preview">
+                                <a href="#" class="mr-3 float-left">
+                                    <img v-bind:src="item['user_head_img']" width="64"
+                                         class="img-fluid img-thumbnail rounded-circle">
+                                </a>
+                                <p class="font-weight-bold ">
+                                    <a v-bind:href="getBlogUrl + item['blog_id']" target="_blank" >{{ item["blog_title"] }}</a>
+                                </p>
+                                <span class="text-grey">{{ item["blog_user"] }}</span>
+                                <span class="text-muted">{{ item["blog_time"] }}</span>
+                                <div class="float-right">
+                                    <button class="btn text-grey" style="color: #007bff" data-toggle="modal" data-target="#new_blog" v-on:click="get_modify_user_blog(item['blog_id'])">修改</button>
+                                    <button class="btn text-grey" style="color: #007bff" v-on:click="delete_user_blog(item['blog_id'])">删除</button>
+                                </div>
+                            </li>
+
+                        </ul>
                     </div>
                 </div>
             </div>
@@ -99,6 +132,10 @@
                     </div>
                     <div class="card-body">
                         Z-BBS是一个超轻量级的论坛系统，前端采用Bootstrap4，后端采用ThinkPHP，超精简的代码实现了论坛的基本功能，并自适应手机平板等
+                        <br>
+                        <span>测试用户名：ZHF</span>
+                        <br>
+                        <span>测试密码：123456</span>
                     </div>
                 </div>
 
@@ -118,7 +155,7 @@
         </div>
     </div>
     <!-- 发新帖模态框 -->
-    <div class="modal fade bd-example-modal-lg" id="new_bolg" tabindex="-1" role="dialog"
+    <div class="modal fade bd-example-modal-lg" id="new_blog" tabindex="-1" role="dialog"
          aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
@@ -129,20 +166,27 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <input type="text" class="form-control" id="bolg_title" placeholder="博客标题">
+                    <input type="text" class="form-control" id="blog_title" placeholder="博客标题">
                     <br>
-                    <select class="custom-select" id="bolg_group">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text">博客ID</div>
+                        </div>
+                        <input type="text" class="form-control" id="blog_id" disabled>
+                    </div>
+                    <br>
+                    <select class="custom-select" id="blog_group">
                         <!--博客属性-->
                         <option value="public">公开博客</option>
                         <option value="private">仅自己可见</option>
                     </select>
-                    <div id="bolg_editor">
+                    <div id="blog_editor">
                         <!--文本编辑器-->
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
-                    <button type="button" class="btn btn-primary" v-on:click="push_new_blog">发布</button>
+                    <button type="button" class="btn btn-primary" v-on:click="push_modify_user_blog">提交修改</button>
                 </div>
             </div>
         </div>
@@ -177,7 +221,7 @@
 <script src="./js/user.js"></script>
 <script>
     const E = window.wangEditor
-    const editor = new E("#bolg_editor")
+    const editor = new E("#blog_editor")
     // 或者 const editor = new E(document.getElementById('div1'))
     editor.create()
 </script>

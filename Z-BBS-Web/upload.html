@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="./lib/jquery/1.10.2/jquery.min.js"></script>
+
+</head>
+<body>
+<center>
+    <input type="file" id="up_file">
+    <button onclick="file_upload()"  id="up_btn">上传到闪电盘</button>
+    <br>
+    文件直链：<input type="text" id="url" style="width: 50%">
+</center>
+</body>
+<script>
+    function file_upload(){
+            document.getElementById("up_btn").disabled = true
+            document.getElementById("up_btn").innerText = "正在上传···"
+            let files = document.getElementById("up_file").files;
+            let data = new FormData();
+            data.append('file', files[0]);
+            $.ajax({
+            method: 'POST',
+            url: 'http://121.5.231.251:5000/uploader',
+            data: data,
+            // 不修改 Content-Type 属性，使用 FormData 默认的 Content-Type 值
+            contentType: false,
+            // 不对 FormData 中的数据进行 url 编码，而是将 FormData 数据原样发送到服务器
+            processData: false,
+            success: function(res) {
+                res_json = JSON.parse(res)
+                console.log(res_json)
+                $("#url").val(res_json['url']);
+                document.getElementById("up_btn").disabled = false
+                document.getElementById("up_btn").innerText = "上传到闪电盘"
+            }
+        })
+    }
+</script>
+</html>

@@ -20,7 +20,7 @@
             margin-top: 10px;
         }
 
-        #bolg_editor{
+        #blog_editor{
             margin-top: 10px;
         }
     </style>
@@ -29,7 +29,7 @@
 <div id="app">
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <a class="navbar-brand" href="#">
-            <img src="img/test.png" width="32" class="d-inline-block align-top" alt="">
+            <img src="img/logo.png" width="32" class="d-inline-block align-top" alt="">
             Z-BBS论坛</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
                 aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -38,22 +38,25 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav mr-auto">
                 <li class="nav-item active">
-                    <a class="nav-link" href="#">主页</a>
+                    <a class="nav-link" v-bind:href="web_url">主页</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">下载</a>
+                    <a class="nav-link" href="https://gitee.com/ZHFHZ/z-bbs" target="_blank">开源</a>
                 </li>
             </ul>
             <div>
             </div>
         </div>
         <div>
-            <button class="btn btn-primary" v-show="login_state" data-toggle="modal" data-target="#new_bolg">发新帖
-            </button>
+            <a class="btn btn-primary" v-show="login_state" v-bind:href="web_url">返回主页</a>
             <button class="btn btn-primary" v-show="!login_state" data-toggle="modal" data-target="#login_model">登录</button>
-            <            img v-bind:src="user_info['user_head_img']" class="img-fluid img-thumbnail rounded-circle"
-                 width="32">
-            <span>{{ user_info["user_name"] }}</span>
+            <a class="user-select-none text-body" href="user.html" target="_blank" style="text-decoration: none">
+                <img v-bind:src="user_info['user_head_img']" class="img-fluid img-thumbnail rounded-circle" width="32">
+                <span>{{ user_info["user_name"] }}</span>
+            </a>
+            <span v-on:click="logon_out" class="user-select-none" v-show="login_state" >
+                    <img src="./img/bootstrap-icons-1.7.1/box-arrow-in-right.svg" width="16" height="16"> 登出
+                </span>
         </div>
     </nav>
 

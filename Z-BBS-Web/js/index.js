@@ -1,7 +1,9 @@
 const vm = new Vue({
     el: "#app",
     data: {
-        url: server_url + "/api/",
+        web_url:WEB_URL,
+        img_bed_url: IMG_BED_URL,
+        url: SERVER_URL + "/api/",
         login_state: false,
         user_info: {
             user_name: "未登录",
@@ -13,8 +15,8 @@ const vm = new Vue({
             "bbsDiscussCount":0,//讨论
             "bbsUserCount":0,//用户
         },
-        blog_info: [
-        ],
+        blog_info: [],
+        blog_preview_info:[],
         blog_msg: {
             "msg_title": "站点公告",
             "msg_text": "Z-BSS开始开发啦"
@@ -26,8 +28,8 @@ const vm = new Vue({
             let data = {
                 "uname": localStorage.getItem("uname"),
                 "token":localStorage.getItem("token"),
-                "blog_title":$("#bolg_title").val(),
-                "blog_group":$("#bolg_group").val(),
+                "blog_title":$("#blog_title").val(),
+                "blog_group":$("#blog_group").val(),
                 "blog_text":editor.txt.html(),
                 "blog_time":this.getDate,
                 "blog_modify_time":this.getDate
@@ -41,8 +43,8 @@ const vm = new Vue({
                     if (res.status === 200) {
                         if (res.data['status'] === 200) {
                             hsycms.success('发送成功',()=>{
-                                $('#new_bolg').modal('hide');
-                                this.get_blog_info("public");
+                                $('#new_blog').modal('hide');
+                                this.get_blog_preview_info("public");
                             },1800)
                         } else {
                             alert("接口验证失败")
@@ -52,17 +54,17 @@ const vm = new Vue({
                     }
                 })
         },
-        get_blog_info: function (group) {
+        get_blog_preview_info: function (group) {
             /*
             * 获取博文标题和预览
             * @param group {String} 需获取的博客的组
             * */
-            axios.get(this.url + "getBlogPreview/" + group + "?ran="+Math.floor(Math.random()*10000))
+            axios.get(this.url + "getBlogPreview/" + group + "?ran="+Math.random())
                 //用随机数来阻止缓存
                 .then((res) => {
                     if (res.status === 200) {
                         if (res.data['status'] === 200) {
-                            this.blog_info = res.data['data'];
+                            this.blog_preview_info = res.data['data'];
                         } else {
                             alert("接口验证失败")
                         }
@@ -121,12 +123,10 @@ const vm = new Vue({
                     if(res.status===200){
                         //console.log(res.data['status']===404)
                         if (res.data['status'] === 200){
-                            hsycms.success('用户已登录',()=>{
-                                this.user_info['user_name'] = uname;
-                                this.user_info['user_head_img'] = res.data['user_head_img'];
-                                this.login_state = true;
-                                console.log("验证成功");
-                            },1800)
+                            this.user_info['user_name'] = uname;
+                            this.user_info['user_head_img'] = res.data['user_head_img'];
+                            this.login_state = true;
+                            console.log("验证成功");
                         }else if(res.data['status']===404) {
                             this.user_info['user_name'] = "未登录"
                             this.user_info['user_head_img'] = "img/logo.png";
@@ -138,7 +138,7 @@ const vm = new Vue({
         },
         get_bbs_info:function(){
             //论坛数据
-            axios.get(this.url + "getBbsInfo")
+            axios.get(this.url + "getBbsInfo" + "?ran="+Math.random())
                 .then((res) => {
                     if (res.status === 200) {
                         if (res.data['status'] === 200) {
@@ -171,14 +171,14 @@ const vm = new Vue({
     computed: {
         getDate:function (){
             let d = new Date()
-            return d.getFullYear() + "-" + d.getMonth() + "-" + d.getDate() + " " + d.getHours() + ":" + d.getMinutes()+":"+d.getSeconds();
+            return d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate() + " " + d.getHours() + ":" + d.getMinutes()+":"+d.getSeconds();
         },
         getBlogUrl:function (){
             return window.location.protocol + "//" + window.location.host + "/blog.html?bid=";
         }
     },
     mounted: function () {
-        this.get_blog_info("public");
+        this.get_blog_preview_info("public");
         this.user_check();
         this.get_bbs_info();
     }

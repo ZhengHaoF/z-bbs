@@ -14,12 +14,14 @@
     <script src="config.js"></script>
     <script src="lib/hsycmsAlert/hsycmsAlert.js"></script>
     <link href="lib/hsycmsAlert/hsycmsAlert.css" type="text/css" rel="stylesheet">
+
+    <script src="https://cdn.bootcss.com/vConsole/3.2.0/vconsole.min.js"></script>
     <style>
         .card {
             margin-top: 10px;
         }
 
-        #bolg_editor {
+        #blog_editor {
             margin-top: 10px;
         }
     </style>
@@ -28,7 +30,7 @@
 <div id="app">
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <a class="navbar-brand" href="#">
-            <img src="img/test.png" width="32" class="d-inline-block align-top" alt="">
+            <img src="img/logo.png" width="32" class="d-inline-block align-top" alt="">
             Z-BBS论坛</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
                 aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -37,23 +39,26 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav mr-auto">
                 <li class="nav-item active">
-                    <a class="nav-link" href="#">主页 <span class="sr-only">(current)</span></a>
+                    <a class="nav-link" v-bind:href="web_url">主页 <span class="sr-only">(current)</span></a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">下载</a>
+                    <a class="nav-link" href="https://gitee.com/ZHFHZ/z-bbs" target="_blank">开源</a>
                 </li>
             </ul>
             <div>
             </div>
         </div>
         <div>
-            <button class="btn btn-primary" v-show="login_state" data-toggle="modal" data-target="#new_bolg">发新帖
+            <button class="btn btn-primary" v-show="login_state" data-toggle="modal" data-target="#new_blog">发新帖
             </button>
             <button class="btn btn-primary" v-show="!login_state" data-toggle="modal" data-target="#login_model">登录</button>
-            <img v-bind:src="user_info['user_head_img']" class="img-fluid img-thumbnail rounded-circle"
-                 width="32">
-            <span v-on:click="logon_out">{{ user_info["user_name"] }}</span>
-
+                <a class="user-select-none text-body" href="user.html" target="_blank" style="text-decoration: none">
+                    <img v-bind:src="user_info['user_head_img']" class="img-fluid img-thumbnail rounded-circle" width="32">
+                    <span>{{ user_info["user_name"] }}</span>
+                </a>
+                <span v-on:click="logon_out" class="user-select-none" v-show="login_state" >
+                    <img src="./img/bootstrap-icons-1.7.1/box-arrow-in-right.svg" width="16" height="16"> 登出
+                </span>
         </div>
     </nav>
 
@@ -74,7 +79,7 @@
                     <div class="card-body">
                         <!--博客预览-->
                         <ul class="list-group list-group-flush">
-                            <li class="list-group-item" v-for="item in blog_info">
+                            <li class="list-group-item" v-for="item in blog_preview_info">
                                 <a href="#" class="mr-3 float-left">
                                     <img v-bind:src="item['user_head_img']" width="64"
                                          class="img-fluid img-thumbnail rounded-circle">
@@ -95,6 +100,10 @@
                     </div>
                     <div class="card-body">
                         Z-BBS是一个超轻量级的论坛系统，前端采用Bootstrap4，后端采用ThinkPHP，超精简的代码实现了论坛的基本功能，并自适应手机平板等
+                        <br>
+                        <span>测试用户名：ZHF</span>
+                        <br>
+                        <span>测试密码：123456</span>
                     </div>
                 </div>
 
@@ -114,7 +123,7 @@
         </div>
     </div>
     <!-- 发新帖模态框 -->
-    <div class="modal fade bd-example-modal-lg" id="new_bolg" tabindex="-1" role="dialog"
+    <div class="modal fade bd-example-modal-lg" id="new_blog" tabindex="-1" role="dialog"
          aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
@@ -125,19 +134,20 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <input type="text" class="form-control" id="bolg_title" placeholder="博客标题">
+                    <input type="text" class="form-control" id="blog_title" placeholder="博客标题">
                     <br>
-                    <select class="custom-select" id="bolg_group">
+                    <select class="custom-select" id="blog_group">
                         <!--博客属性-->
                         <option value="public">公开博客</option>
                         <option value="private">仅自己可见</option>
                     </select>
-                    <div id="bolg_editor">
+                    <div id="blog_editor">
                         <!--文本编辑器-->
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+                    <a type="button" class="btn btn-primary" v-bind:href="img_bed_url" target="_blank">上传文件/图片</a>
                     <button type="button" class="btn btn-primary" v-on:click="push_new_blog">发布</button>
                 </div>
             </div>
@@ -173,7 +183,7 @@
 <script src="./js/index.js"></script>
 <script>
     const E = window.wangEditor
-    const editor = new E("#bolg_editor")
+    const editor = new E("#blog_editor")
     // 或者 const editor = new E(document.getElementById('div1'))
     editor.create()
 </script>
