@@ -5,22 +5,19 @@ Z-BBS是一个超轻量级的论坛系统，前端采用Bootstrap4，后端采�
 
 ### 详情
 
-![](https://i.bmp.ovh/imgs/2021/11/71478d7d8896d383.png)
+#### 在线测试
 
-![](https://i.bmp.ovh/imgs/2021/11/c9d18c1963407f80.png)
-
-![](https://i.bmp.ovh/imgs/2021/11/8cf7a2cfac125511.png)
-
-![](https://i.bmp.ovh/imgs/2021/11/b984e6e5ff4bc28f.png)
+[Z-Blog (zhfblog.top)](https://bbs.zhfblog.top/)
 
 #### 更新历史：
 
-v0.0.4 Beta 评论功能更新：
+v0.0.4 Beta 2021.11.30 评论功能更新：
 
 - 新增用户管理界面
 - 新增删除博文功能
 - 新增编辑博文功能
 - 优化主页样式
+- 修改用户交互逻辑，去除不必要的动画
 
 v0.0.3 Beta 2021.11.22评论功能更新：
 
