@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
+    <link  href="./dist/cropper.css" rel="stylesheet">
+    <script src="./dist/cropper.js"></script>
+</head>
+<body>
+<input type="file" onchange="selectImage(this)">
+<button onclick="cut()">裁切</button>
+<div class="container">
+    <img src="" id="image" onload="load_cut()">
+</div>
+</body>
+<script>
+     function load_cut(){
+        $('.container > img').cropper({
+            aspectRatio: 1 / 1,
+            crop: function(data) {
+                console.log(data);
+            }
+        });
+    }
+    function cut(){
+        var cas=$('.container > img').cropper('getCroppedCanvas');
+        console.log(cas);
+        var base64url=cas.toDataURL('image/jpeg');
+        console.log(base64url)
+    }
+
+
+    function selectImage(file) {
+        let image = ""
+        if (!file.files || !file.files[0]) {
+            return;
+        }
+        var reader = new FileReader();
+        reader.onload = function (evt) {
+            document.getElementById('image').src = evt.target.result;
+            image = evt.target.result;
+        }
+        reader.readAsDataURL(file.files[0]);
+    }
+
+</script>
+</html>

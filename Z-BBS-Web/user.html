@@ -14,6 +14,8 @@
     <script src="config.js"></script>
     <script src="lib/hsycmsAlert/hsycmsAlert.js"></script>
     <link href="lib/hsycmsAlert/hsycmsAlert.css" type="text/css" rel="stylesheet">
+    <link  href="./lib/cropper/dist/cropper.css" rel="stylesheet">
+    <script src="./lib/cropper/dist/cropper.js"></script>
     <style>
         .card {
             margin-top: 10px;
@@ -92,12 +94,13 @@
                                     <span class="form-control">{{user_info['user_name']}}</span>
                                 </div>
                                 <div class="input-group form-group">
-                                    <input type="password" class="form-control">
-                                    <button class="btn btn-primary">修改密码</button>
+                                    <input type="password" class="form-control" id="new_pwd">
+                                    <button class="btn btn-primary" v-on:click="modify_user_password">修改密码</button>
                                 </div>
                                 <div class="input-group form-group">
-                                    <input type="file" class="form-control">
-                                    <button class="btn btn-primary" v-on:click="modify_user_head()" id="up_btn">修改头像</button>
+                                    <img src="" id="image" class="img-fluid" v-on:load="img_load_cut">
+                                    <input type="file" accept="image/gif,image/jpeg,image/jpg,image/png" id="img_file" class="form-control" v-on:change="img_load">
+                                    <button class="btn btn-primary" id="up_btn" v-on:click="push_modify_user_head">修改头像</button>
                                 </div>
                             </div>
                         </div>

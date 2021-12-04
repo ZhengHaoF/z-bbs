@@ -27,3 +27,6 @@ Route::get('api/getBbsInfo', 'index/getBbsInfo');
 Route::post('api/getUserBlogPreview', 'index/getUserBlogPreview');
 Route::post('api/delUserBlog', 'index/delUserBlog');
 Route::post('api/modifyUserBlog', 'index/modifyUserBlog');
+Route::post('api/modifyUserPassword', 'index/modifyUserPassword');
+Route::post('api/modifyUserHead', 'index/modifyUserHead');
+Route::post('img/', 'index/');

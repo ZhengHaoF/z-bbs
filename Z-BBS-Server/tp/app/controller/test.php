@@ -1,2 +1,2 @@
 <?php
-    echo rand(10000,99999);
+    echo $_SERVER['SERVER_NAME'];
