@@ -14,8 +14,6 @@
     <script src="config.js"></script>
     <script src="lib/hsycmsAlert/hsycmsAlert.js"></script>
     <link href="lib/hsycmsAlert/hsycmsAlert.css" type="text/css" rel="stylesheet">
-
-    <script src="https://cdn.bootcss.com/vConsole/3.2.0/vconsole.min.js"></script>
     <style>
         .card {
             margin-top: 10px;
@@ -51,7 +49,7 @@
         <div>
             <button class="btn btn-primary" v-show="login_state" data-toggle="modal" data-target="#new_blog">发新帖
             </button>
-            <button class="btn btn-primary" v-show="!login_state" data-toggle="modal" data-target="#login_model">登录</button>
+            <button class="btn btn-primary" v-show="!login_state" data-toggle="modal" data-target="#login_model">登录/注册</button>
                 <a class="user-select-none text-body" href="user.html" target="_blank" style="text-decoration: none">
                     <img v-bind:src="user_info['user_head_img']" class="img-fluid img-thumbnail rounded-circle" width="32">
                     <span>{{ user_info["user_name"] }}</span>
@@ -173,7 +171,38 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#registered_model" >注册</button>
                     <button type="button" class="btn btn-primary" v-on:click="user_login">登录</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 注册模态框 -->
+    <div class="modal fade bd-example-modal-lg" id="registered_model" tabindex="-1" role="dialog"
+         aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">登录</h5>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="uname">用户名</label>
+                        <input type="text" class="form-control" id="r_uname" aria-describedby="emailHelp" placeholder="用户名">
+                    </div>
+                    <div class="form-group">
+                        <label for="pwd">密码</label>
+                        <input type="password" class="form-control" id="r_pwd" placeholder="密码">
+                    </div>
+                    <div class="form-group">
+                        <label for="pwd">确认密码</label>
+                        <input type="password" class="form-control" id="r_r_pwd" placeholder="确认密码">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+                    <button type="button" class="btn btn-primary" v-on:click="user_registered">提交</button>
                 </div>
             </div>
         </div>

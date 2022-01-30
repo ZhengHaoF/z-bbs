@@ -169,7 +169,7 @@
                 </div>
                 <div class="modal-body">
                     原文：<p v-html="reply_reply_box['reply_original_text']"></p>
-                    <textarea class="form-control" ref="reply_reply_text" v-model="reply_reply_box['reply_text']" v-bind:placeholder="'@' + reply_reply_box['reply_for_name']">
+                    <textarea class="form-control" id="reply_reply_text" ref="reply_reply_text" v-model="reply_reply_box['reply_text']" v-bind:placeholder="'@' + reply_reply_box['reply_for_name']">
 
                     </textarea>
 

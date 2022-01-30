@@ -110,10 +110,11 @@ const vm = new Vue({
                             console.log("验证成功");
                             //获取用户博客预览
                             this.get_user_blog_preview_info();
-                        }else if(res.data['status']===404) {
+                        }else if(res.data['status']===403) {
                             this.user_info['user_name'] = "未登录"
                             this.user_info['user_head_img'] = "img/logo.png";
                             this.login_state = false;
+                            $('#login_model').modal('show');
                             console.log("验证失败");
 
                         }

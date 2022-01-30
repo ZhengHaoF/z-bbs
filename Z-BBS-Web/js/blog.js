@@ -111,6 +111,7 @@ const vm = new Vue({
                                 localStorage.setItem("uname",res.data['data']['uname']);
                                 localStorage.setItem("token",res.data['data']['token']);
                                 $('#login_model').modal('hide');
+
                             },1800)
                         }else if(res.data['status']===404) {
                             hsycms.fail('用户名或密码错误',()=>{
@@ -169,12 +170,13 @@ const vm = new Vue({
                 .then((res) => {
                     if (res.status === 200) {
                         if (res.data['status'] === 200) {
-                            hsycms.success("评论成功    ",()=>{
+                            hsycms.success("评论成功",()=>{
                                 //清空两个文本框
-                                this.$refs['reply_reply_text'].val('');
-                                this.$refs['reply_text'].val('');
+                                this.$refs['reply_text'].value = "";
+                                this.$refs['reply_reply_text'].value = "";
                                 //重新获取博客ID
-                                this.get_reply(blog_id,0)
+                                this.get_reply(blog_id,0);
+                                $('#respond_model').modal('hide');
                             },1800)
                         } else if(res.data['status'] === 403){
                             hsycms.fail('用户未登录',()=>{

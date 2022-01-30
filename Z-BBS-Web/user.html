@@ -49,8 +49,8 @@
             </div>
         </div>
         <div>
-            <button class="btn btn-primary" v-show="login_state" data-toggle="modal" data-target="#new_blog">发新帖
-            </button>
+            <a class="btn btn-primary" v-bind:href="web_url"n>返回主页
+            </a>
             <button class="btn btn-primary" v-show="!login_state" data-toggle="modal" data-target="#login_model">登录</button>
             <a class="user-select-none text-body" href="user.html" target="_blank" style="text-decoration: none">
                 <img v-bind:src="user_info['user_head_img']" class="img-fluid img-thumbnail rounded-circle" width="32">

@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>Z-Blog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- 开发环境版本，包含了有帮助的命令行警告 -->
+    <script src="./lib/Vue/vue.js"></script>
+    <script src="./lib/jquery/1.10.2/jquery.min.js"></script>
+    <script src="lib/bootstrap-4.6.0-dist/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="lib/bootstrap-4.6.0-dist/css/bootstrap.min.css">
+    <script type="text/javascript" src="./lib/wangeditor/wangEditor.min.js"></script>
+    <script src="./lib/axios/axios.min.js"></script>
+    <script src="config.js"></script>
+    <script src="lib/hsycmsAlert/hsycmsAlert.js"></script>
+    <link href="lib/hsycmsAlert/hsycmsAlert.css" type="text/css" rel="stylesheet">
+    <script src="lib/chart.js/dist/chart.min.js"></script>
+    <style>
+        .card {
+            margin-top: 10px;
+        }
+
+        #blog_editor {
+            margin-top: 10px;
+        }
+        html{
+            height: 100%;
+        }
+        body{
+            height: 100%;
+            overflow-x: hidden;
+        }
+        #app{
+            height: 100%;
+        }
+        *{
+            margin: 0;
+            padding: 0;
+        }
+
+    </style>
+</head>
+<body>
+<div id="app">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="#">
+            <img src="img/logo.png" width="32" class="d-inline-block align-top" alt="">
+            Z-BBS论坛</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item active">
+                    <a class="nav-link" v-bind:href="web_url">主页 <span class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="https://gitee.com/ZHFHZ/z-bbs" target="_blank">开源</a>
+                </li>
+            </ul>
+            <div>
+            </div>
+        </div>
+        <div>
+            <button class="btn btn-primary" v-show="login_state">返回主页</button>
+            <button class="btn btn-primary" v-show="!login_state" data-toggle="modal" data-target="#login_model">登录</button>
+            <a class="user-select-none text-body" href="user.html" target="_blank" style="text-decoration: none">
+                <img v-bind:src="user_info['user_head_img']" class="img-fluid img-thumbnail rounded-circle" width="32">
+                <span>{{ user_info["user_name"] }}</span>
+            </a>
+            <span v-on:click="logon_out" class="user-select-none" v-show="login_state" >
+                        <img src="./img/bootstrap-icons-1.7.1/box-arrow-in-right.svg" width="16" height="16"> 登出
+                    </span>
+        </div>
+    </nav>
+    <div class="container" v-show="login_state">
+        <div class="row">
+            <div class="col-lg-4">
+                <div class="card">
+                    <div class="card-header">
+                        <span>用户数据</span>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="user_count" height="200"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="card">
+                    <div class="card-header">
+                        <span>帖子数据</span>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="sss" height="200"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="card">
+                    <div class="card-header">
+                        <span>访问数据</span>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="sdf" height="200"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+        <!-- 登录模态框 -->
+        <div class="modal fade bd-example-modal-lg" id="login_model" tabindex="-1" role="dialog"
+             aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">登录</h5>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="uname">用户名</label>
+                            <input type="text" class="form-control" id="uname" aria-describedby="emailHelp" placeholder="用户名">
+                        </div>
+                        <div class="form-group">
+                            <label for="pwd">密码</label>
+                            <input type="password" class="form-control" id="pwd" placeholder="密码">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+                        <button type="button" class="btn btn-primary" v-on:click="user_login">登录</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+</div>
+<script src="./js/admin.js"></script>
+<script>
+    let user_count_ctx = $("#user_count");
+    let user_count = new Chart(user_count_ctx, {
+        type: 'line',
+        data: {
+            labels: ["2020-12-01", "2020-12-01", "2020-12-01", "2020-12-01", "2020-12-01", "2020-12-01","2020-12-01"],
+            datasets: [{
+                label: '用户总数',
+                data: [12, 19, 3, 5, 2, 3],
+                backgroundColor: [
+                    'rgba(54, 162, 235, 0.2)'
+                ],
+                borderColor: [
+                    'rgba(54, 162, 235, 1)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {}
+    });
+
+
+</script>
+</body>
+<!--<script>-->
+<!--    const E = window.wangEditor-->
+<!--    const editor = new E("#blog_editor")-->
+<!--    // 或者 const editor = new E(document.getElementById('div1'))-->
+<!--    editor.create()-->
+<!--</script>-->
+</html>

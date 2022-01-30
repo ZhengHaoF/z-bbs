@@ -200,13 +200,34 @@ class Index extends BaseController
         }
         return json(array("status"=>200,"data"=>$data));
     }
-    public function getBbsInfo(){
-        //获取论坛数据
+    public function getBbsBaseInfo(){
+        //获取论坛基础数据
         $bbsThemeCount = Db::table("z_blog_info")->count();
         $bbsDiscussCount = Db::table("z_reply_info")->count();
         $bbsUserCount = Db::table("z_users")->count();
         return json(array("status"=>200,"data"=>array("bbsThemeCount"=>$bbsThemeCount,"bbsDiscussCount"=>$bbsDiscussCount,"bbsUserCount"=>$bbsUserCount)));
     }
+
+
+    public function getBbsInfo(Request $request){
+//        //获取论坛详细数据
+//        $uname = $request -> param("uname");
+//        $token = $request -> param("token");
+//        if($this->userLoginCheckMethods($uname,$token)["status"]==200) {
+//
+//        }else{
+//            return json(array("status" => 403, "msg" => "用户未登录或密码错误"));
+//        }
+
+        //近七天新增用户数
+        for($i=0;$i<7;$i++){
+            $data = date("Y-m-d", strtotime("-$i day"));
+            $a[$i]=array("date"=>$data,"new_user_num"=>Db::table("z_users")->where("reg_time",$data)->count());
+        }
+        return json($a);
+    }
+
+
     public function getUserBlogPreview(Request $request){
         //获取博客预览内容
         $uname = $request -> param("uname");
@@ -337,6 +358,8 @@ class Index extends BaseController
         }
     }
 
+
+
     /**
      * base64转码图片
      * @param $base64
@@ -386,6 +409,24 @@ class Index extends BaseController
         return $im2;
     }
 
+    function userRegistered(Request $request){
+        //用户注册
+        $uname = $request -> param("uname");
+        $pwd = $request -> param("pwd");
+        $reg_time = $request -> param("time");
+        if($pwd == "" or $uname == ""){
+            return json(array("status" => 502,"msg" => "用户名或密码为空"));
+        }
+        if (Db::table("z_users")->where("uname",$uname)->count() > 0){
+            return json(array("status" => 502, "msg" => "用户已存在"));
+        }
+        $data = ["uname"=> $uname,"pwd"=>md5($pwd),"reg_time" => $reg_time];
+        if (Db::table("z_users")->insert($data)){
+            return json(array("status" => 200, "msg" => "注册成功"));
+        }
+
+        return 0;
+    }
 
 
     /*
@@ -394,6 +435,7 @@ class Index extends BaseController
         404 --- 找不到文件/用户（登录时或查看博客时）
         403 --- 禁止访问（用户未登录）
         500 --- 服务器问题，未响应
+        502 --- 传参错误
     */
 
 }

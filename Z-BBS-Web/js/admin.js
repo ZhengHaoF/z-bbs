@@ -1,5 +1,3 @@
-
-
 const vm = new Vue({
     el: "#app",
     data: {
@@ -129,52 +127,19 @@ const vm = new Vue({
                             this.user_info['user_head_img'] = res.data['user_head_img'];
                             this.login_state = true;
                             console.log("验证成功");
-                        }else if(res.data['status']===404) {
+                        }else if(res.data['status']===403) {
                             this.user_info['user_name'] = "未登录"
                             this.user_info['user_head_img'] = "img/logo.png";
                             this.login_state = false;
+                            $('#login_model').modal('show');
                             console.log("验证失败");
                         }
                     }
                 })
         },
-        user_registered:function (){
-            //用户注册
-            let uname = document.getElementById("r_uname").value;
-            let pwd = document.getElementById("r_pwd").value;
-            console.log(pwd)
-            if (pwd === document.getElementById("r_r_pwd").value){
-                let data = {
-                    "uname":uname,
-                    "pwd":pwd,
-                    "time":this.getDate
-                }
-                let formData = new FormData()
-                for (let key in data) {
-                    formData.append(key, data[key])
-                }
-                axios.post(this.url + "userRegistered",formData)
-                    .then((res)=>{
-                        if(res.status===200){
-                            if (res.data['status'] === 200){
-                                hsycms.success("注册成功",()=>{
-                                    $('#registered_model').modal('hide');
-                                })
-                            }else{
-                                hsycms.fail(res.data['msg'],()=>{
-                                    console.log("注册失败")
-                                })
-                            }
-                        }
-                    })
-            }else {
-                hsycms.alert("两次输入的密码不相同")
-            }
-
-        },
         get_bbs_info:function(){
-            //论坛基础数据
-            axios.get(this.url + "getBbsBaseinfo" + "?ran="+Math.random())
+            //论坛数据
+            axios.get(this.url + "getBbsInfo" + "?ran="+Math.random())
                 .then((res) => {
                     if (res.status === 200) {
                         if (res.data['status'] === 200) {
